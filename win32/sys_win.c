@@ -499,7 +499,18 @@ void *Sys_GetGameAPI (void *parms)
 		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
 
 	// check the current debug directory first for development purposes
-	_getcwd (cwd, sizeof(cwd));
+	//SF: Modified to load the gamex86 dll found in the same path as the executable
+	//_getcwd (cwd, sizeof(cwd));
+	GetModuleFileNameA(0, cwd, sizeof(cwd));
+	for(char* c = cwd + MAX_OSPATH - 1; c != cwd; --c)
+	{
+		if(*c == '\\')
+		{
+			*c = 0;
+			break;
+		}
+	}
+	debugdir = "";
 	Com_sprintf (name, sizeof(name), "%s/%s/%s", cwd, debugdir, gamename);
 	game_library = LoadLibrary ( name );
 	if (game_library)
