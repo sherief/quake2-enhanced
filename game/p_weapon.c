@@ -388,7 +388,8 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 	if (ent->client->weaponstate == WEAPON_DROPPING)
 	{
-		if (ent->client->ps.gunframe == FRAME_DEACTIVATE_LAST)
+		//if (ent->client->ps.gunframe == FRAME_DEACTIVATE_LAST)
+		if (1) // SF
 		{
 			ChangeWeapon (ent);
 			return;
@@ -415,7 +416,8 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
-		if (ent->client->ps.gunframe == FRAME_ACTIVATE_LAST)
+		//if (ent->client->ps.gunframe == FRAME_ACTIVATE_LAST)
+		if (1) // SF
 		{
 			ent->client->weaponstate = WEAPON_READY;
 			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
