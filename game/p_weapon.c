@@ -1001,7 +1001,7 @@ void Machinegun_Fire (edict_t *ent)
 	// raise the gun as it is firing
 	if (!deathmatch->value)
 	{
-		ent->client->machinegun_shots++;
+		//ent->client->machinegun_shots++;
 		if (ent->client->machinegun_shots > 9)
 			ent->client->machinegun_shots = 9;
 	}
