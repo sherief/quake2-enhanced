@@ -223,8 +223,8 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 	gitem_t	*item;
 	int		index;
 
-	if (other->client->pers.max_bullets < 250)
-		other->client->pers.max_bullets = 250;
+	if (other->client->pers.max_bullets < 350)
+		other->client->pers.max_bullets = 350;
 	if (other->client->pers.max_shells < 150)
 		other->client->pers.max_shells = 150;
 	if (other->client->pers.max_cells < 250)
@@ -261,8 +261,8 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 	gitem_t	*item;
 	int		index;
 
-	if (other->client->pers.max_bullets < 300)
-		other->client->pers.max_bullets = 300;
+	if (other->client->pers.max_bullets < 400)
+		other->client->pers.max_bullets = 400;
 	if (other->client->pers.max_shells < 200)
 		other->client->pers.max_shells = 200;
 	if (other->client->pers.max_rockets < 100)
