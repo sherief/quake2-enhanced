@@ -363,6 +363,116 @@ void fire_bullet (edict_t *self, vec3_t start, vec3_t dir, int damage, int kick,
 	}
 }
 
+/*
+=================
+pellet_touch
+
+Handles pellet collision
+=================
+*/
+void pellet_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf)
+{
+	int		mod;
+
+	if(other == self->owner)
+		return;
+
+	if(surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict(self);
+		return;
+	}
+
+	if(self->owner->client)
+		PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
+
+	if(other->takedamage)
+	{
+		T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_BULLET, mod);
+	}
+	else
+	{
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_SHOTGUN);
+		gi.WritePosition(self->s.origin);
+		if(!plane)
+			gi.WriteDir(vec3_origin);
+		else
+			gi.WriteDir(plane->normal);
+		gi.multicast(self->s.origin, MULTICAST_PVS);
+	}
+
+	G_FreeEdict(self);
+}
+
+/*
+=================
+fire_pellet
+
+Fires a single shotgun pellet.
+=================
+*/
+void fire_pellet(edict_t* self, vec3_t start, vec3_t dir, int damage, int kick, int hspread, int vspread, int mod)
+{
+	edict_t* bolt;
+	trace_t	tr;
+	int speed = 2000;
+	vec3_t angles;
+	vec3_t forward, right, up;
+	float r, u;
+	vec3_t end;
+
+	vectoangles(dir, angles);
+	AngleVectors(angles, forward, right, up);
+
+	r = crandom() * hspread;
+	u = crandom() * vspread;
+	VectorMA(start, 8192, forward, end);
+	VectorMA(end, r, right, end);
+	VectorMA(end, u, up, end);
+
+	VectorSubtract(end, start, dir);
+
+	VectorNormalize(dir);
+
+	bolt = G_Spawn();
+	bolt->svflags = SVF_DEADMONSTER;
+	// yes, I know it looks weird that projectiles are deadmonsters
+	// what this means is that when prediction is used against the object
+	// (blaster/hyperblaster shots), the player won't be solid clipped against
+	// the object.  Right now trying to run into a firing hyperblaster
+	// is very jerky since you are predicted 'against' the shots.
+	VectorCopy(start, bolt->s.origin);
+	VectorCopy(start, bolt->s.old_origin);
+	vectoangles(dir, bolt->s.angles);
+	VectorScale(dir, speed, bolt->velocity);
+	bolt->movetype = MOVETYPE_FLYMISSILE;
+	bolt->clipmask = MASK_SHOT;
+	bolt->solid = SOLID_BBOX;
+	//bolt->s.effects |= effect;
+	VectorClear(bolt->mins);
+	VectorClear(bolt->maxs);
+	bolt->s.modelindex = gi.modelindex("models/objects/laser/tris.md2");
+	bolt->s.sound = gi.soundindex("misc/lasfly.wav");
+	bolt->owner = self;
+	bolt->touch = pellet_touch;
+	bolt->nextthink = level.time + 20;
+	bolt->think = G_FreeEdict;
+	bolt->dmg = damage;
+	bolt->classname = "bolt";
+
+	gi.linkentity(bolt);
+	/*
+	if(self->client)
+		check_dodge(self, bolt->s.origin, dir, speed);
+	*/
+	tr = gi.trace(self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+	if(tr.fraction < 1.0)
+	{
+		VectorMA(bolt->s.origin, -10, dir, bolt->s.origin);
+		bolt->touch(bolt, tr.ent, NULL, NULL);
+	}
+}
 
 /*
 =================
@@ -376,7 +486,7 @@ void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int k
 	int		i;
 
 	for (i = 0; i < count; i++)
-		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
+		fire_pellet (self, start, aimdir, damage, kick, hspread, vspread, mod);
 }
 
 
