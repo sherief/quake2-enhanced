@@ -551,6 +551,9 @@ extern	cvar_t	*flood_waitdelay;
 
 extern	cvar_t	*sv_maplist;
 
+extern cvar_t *bullet_speed;
+extern cvar_t *pellet_speed;
+
 #define world	(&g_edicts[0])
 
 // item spawnflags

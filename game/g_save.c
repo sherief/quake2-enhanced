@@ -203,6 +203,9 @@ void InitGame (void)
 	// dm map list
 	sv_maplist = gi.cvar ("sv_maplist", "", 0);
 
+	bullet_speed = gi.cvar ("bullet_speed", "2500", 0);
+	pellet_speed = gi.cvar ("pellet_speed", "2000", 0);
+
 	// items
 	InitItems ();
 

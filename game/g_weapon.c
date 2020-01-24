@@ -320,7 +320,7 @@ void fire_bullet (edict_t *self, vec3_t start, vec3_t dir, int damage, int kick,
 {
 	edict_t* bolt;
 	trace_t	tr;
-	int speed = 2500;
+	int speed = bullet_speed->value;
 
 	VectorNormalize(dir);
 
@@ -416,7 +416,7 @@ void fire_pellet(edict_t* self, vec3_t start, vec3_t dir, int damage, int kick, 
 {
 	edict_t* bolt;
 	trace_t	tr;
-	int speed = 2000;
+	int speed = pellet_speed->value;
 	vec3_t angles;
 	vec3_t forward, right, up;
 	float r, u;
